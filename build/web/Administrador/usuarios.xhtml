@@ -1,0 +1,221 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Usuarios</title>
+        <link rel="stylesheet" TYPE="text/css" href="../css/usuarios.css"/>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous"/>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+        <h:outputStylesheet name="primeicons/primeicons.css" library="primefaces"/>
+    </h:head>
+    <h:body>
+        <f:event type="preRenderView" listener="#{loginBean.verifSesionAdmin()}" />
+        <f:event type="preRenderView" listener="#{usuarioBean.listar()}" />
+        <header>
+            <div class="container__header">
+                <div class="logo">
+                    <img src="../Logo/logo_small.png"/>
+                </div>
+                <h:form>
+                    <div class="menu">
+                        <nav>
+                            <ul>
+                                <li><p:commandButton  value="Usuarios" action="usuarios"/></li>
+                                <li><p:splitButton value="Inventario" >
+                                        <p:menuitem value="Productos" action="productos"/>
+                                        <p:menuitem value="Lotes"  action="lotes"/>
+                                        <p:menuitem value="Categoria" action="categorias"/>
+                                        <p:menuitem value="Proveedor" action="proveedores"/>
+                                    </p:splitButton></li>
+                                <li><p:commandButton  value="Ventas" action="ventas"/></li>
+                                <li><p:commandButton  value="Cerrar Sesión" actionListener="#{loginBean.cerrarSesion()}"/></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </h:form>
+            </div>
+        </header>
+
+        <h:form>
+            <p:commandButton value="Nuevo Usuario" oncomplete="PF('wdlgUsu').show()" />
+            <p:commandButton ajax="false" value="Descargar XSL" style="margin-left: 15px;">
+                <p:dataExporter type="xls" target="lstU" fileName="Usuarios"/>
+            </p:commandButton>
+
+            <p:commandButton ajax="false" value="Descargar PDF" style="margin-left: 15px;">
+                <p:dataExporter type="pdf" target="lstU" fileName="Usuarios"/>
+            </p:commandButton>
+            <p:dataTable value="#{usuarioBean.lstUsuarios}"  var="usu" widgetVar="wlstU" id="lstU"
+                         filteredValue="#{usuarioBean.lstUsuariosFiltrada}" paginator="true" paginatorPosition="bottom"
+                         paginatorTemplate="{CurrentPageReport} {PageLinks} {RowsPerPageDropdown}" rows="8"
+                         currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} registros"
+                         rowsPerPageTemplate="8,16,{ShowAll|'Todos'}">
+                <f:facet name="header">
+                    <div>
+                        <span>Buscar: </span>
+                        <p:inputText id="globalFilter" onkeyup="PF('wlstU').filter()"/>
+                    </div>
+                </f:facet>
+                <p:column exportable="false">
+                    <f:facet name="header">Código</f:facet>
+                    <h:outputLabel value="#{usu.codigousuario}"/>
+                </p:column>
+                <p:column filterBy="#{usu.nombreusuario}" filterMatchMode="contains" >
+                    <f:facet name="header">Nombre</f:facet>
+                    <h:outputLabel value="#{usu.nombreusuario}"/>
+                </p:column>
+                <p:column filterBy="#{usu.estado}" filterMatchMode="contains">
+                    <f:facet name="header">Estado</f:facet>
+                    <h:outputLabel value="#{usu.estado}"/>
+                </p:column>
+                <p:column>
+                    <f:facet name="header">Tipo Documento</f:facet>
+                    <h:outputLabel value="#{usu.tipodocumento}"/>
+                </p:column>
+                <p:column filterBy="#{usu.dni}" filterMatchMode="contains">
+                    <f:facet name="header">Documento</f:facet>
+                    <h:outputLabel value="#{usu.dni}"/>
+                </p:column>
+                <p:column>
+                    <f:facet name="header">Contraseña</f:facet>
+                    <h:outputLabel  for="password" value="#{usu.contraseña}"/>
+                </p:column>
+                <p:column filterBy="#{usu.email}" filterMatchMode="contains">
+                    <f:facet name="header">Email</f:facet>
+                    <h:outputLabel value="#{usu.email}"/>
+                </p:column>
+                <p:column filterBy="#{usu.telefono}" filterMatchMode="contains">
+                    <f:facet name="header">Teléfono</f:facet>
+                    <h:outputLabel value="#{usu.telefono}"/>
+                </p:column>
+                <p:column filterBy="#{usu.nombrerol}" filterMatchMode="contains">
+                    <f:facet name="header">Rol</f:facet>
+                    <h:outputLabel value="#{usu.nombrerol}"/>
+                </p:column>
+                <p:column exportable="false">
+                    <f:facet name="header">Opciones</f:facet>
+                    <p:commandLink value="Editar" actionListener="#{usuarioBean.buscar(usu)}" update="dlgEUsu" oncomplete="PF('wdlgEUsu').show()" style="margin-right: 15px;"/>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+        <p:dialog id="dlgUsu" widgetVar="wdlgUsu" header="Nueva Persona">
+            <center>
+                <h:form>
+                    <h3>Nuevo Usuario</h3>
+                    <h:outputLabel value="Nombre Usuario: "/>
+                    <h:inputText id="txtnu" value="#{usuarioBean.usuario.nombreusuario}" required="true" requiredMessage=" Debe especificar el Nombre de Usuario"/>
+                    <h:message for="txtnu" style="color: red" />
+                    <br/><br/>
+
+                    <h:outputLabel value="Estado: "/>
+                    <h:selectOneMenu value="#{usuarioBean.usuario.estado}" >
+                        <f:selectItem itemLabel="Activo" itemValue="Activo" />
+                        <f:selectItem itemLabel="Bloqueado" itemValue="Bloqueado" />
+                        <f:selectItem itemLabel="Inactivo" itemValue="Inactivo" />
+                    </h:selectOneMenu>
+                    <br/><br/>
+
+                    <h:outputLabel value="Tipo Documento: "/>
+                    <h:selectOneMenu value="#{usuarioBean.usuario.tipodocumento}" >
+                        <f:selectItem itemLabel="Cédula Ciudadania" itemValue="CC" />
+                        <f:selectItem itemLabel="Tarjeta Extranjeria" itemValue="TE" />
+                    </h:selectOneMenu>
+                    <br/><br/>
+
+                    <h:outputLabel value="Documento Identidad: "/>
+                    <h:inputText id="txtdni" value="#{usuarioBean.usuario.dni}" required="true" requiredMessage=" Debe especificar Documento de Identificación"/>
+                    <h:message for="txtdni" style="color: red" />
+                    <br/><br/>
+
+                    <h:outputLabel value="Contraseña: "/>
+                    <h:inputText id="txtc" value="#{usuarioBean.usuario.contraseña}" required="true" requiredMessage=" Debe especificar la Contraseña"/>
+                    <h:message for="txtc" style="color: red" />
+                    <br/><br/>
+
+                    <h:outputLabel value="Email: "/>
+                    <h:inputText id="txte" value="#{usuarioBean.usuario.email}" required="true" requiredMessage=" Debe especificar el email"/>
+                    <h:message for="txte" style="color: red" />
+                    <br/><br/>
+
+                    <h:outputLabel value="Teléfono: "/>
+                    <h:inputText id="txtt" value="#{usuarioBean.usuario.telefono}" required="true" requiredMessage=" Debe especificar el telefono"/>
+                    <h:message for="txtt" style="color: red" />
+                    <br/><br/>
+
+                    <h:outputLabel value="Rol: "/>
+                    <h:selectOneMenu value="#{usuarioBean.usuario.codigorol}" >
+                        <f:selectItem itemLabel="Administrador" itemValue="1" />
+                        <f:selectItem itemLabel="Jefe Inventario" itemValue="2" />
+                        <f:selectItem itemLabel="Vendedor" itemValue="3" />
+                        <f:selectItem itemLabel="Cliente" itemValue="4" />
+                    </h:selectOneMenu>
+                    <br/><br/>
+
+                    <h:commandButton value="Agregar" actionListener="#{usuarioBean.agregar()}"/>
+                </h:form>
+            </center>
+        </p:dialog>
+
+        <p:dialog id="dlgEUsu" widgetVar="wdlgEUsu" header="Editar Usuario">
+            <center>
+                <h:form>
+                    <h3>Editar Usuario</h3>
+                    <h:outputLabel value="Nombre Usuario: "/>
+                    <h:inputText id="txtnu" value="#{usuarioBean.usuario.nombreusuario}" required="true" requiredMessage=" Debe especificar el Nombre de Usuario"/>
+                    <h:message for="txtnu" style="color: red" />
+                    <br/><br/>
+
+                    <h:outputLabel value="Estado: "/>
+                    <h:selectOneMenu value="#{usuarioBean.usuario.estado}" >
+                        <f:selectItem itemLabel="Activo" itemValue="Activo" />
+                        <f:selectItem itemLabel="Bloqueado" itemValue="Bloqueado" />
+                        <f:selectItem itemLabel="Inactivo" itemValue="Inactivo" />
+                    </h:selectOneMenu>
+                    <br/><br/>
+
+                    <h:outputLabel value="Tipo Documento: "/>
+                    <h:selectOneMenu value="#{usuarioBean.usuario.tipodocumento}" >
+                        <f:selectItem itemLabel="Cédula Ciudadania" itemValue="CC" />
+                        <f:selectItem itemLabel="Tarjeta Extranjeria" itemValue="TE" />
+                    </h:selectOneMenu>
+                    <br/><br/>
+
+                    <h:outputLabel value="Documento Identidad: "/>
+                    <h:inputText id="txtdni" value="#{usuarioBean.usuario.dni}" required="true" requiredMessage=" Debe especificar Documento de Identificación"/>
+                    <h:message for="txtdni" style="color: red" />
+                    <br/><br/>
+
+                    <h:outputLabel value="Contraseña: "/>
+                    <h:inputText id="txtc" value="#{usuarioBean.usuario.contraseña}" required="true" requiredMessage=" Debe especificar la Contraseña"/>
+                    <h:message for="txtc" style="color: red" />
+                    <br/><br/>
+
+                    <h:outputLabel value="Email: "/>
+                    <h:inputText id="txte" value="#{usuarioBean.usuario.email}" required="true" requiredMessage=" Debe especificar el email"/>
+                    <h:message for="txte" style="color: red" />
+                    <br/><br/>
+
+                    <h:outputLabel value="Teléfono: "/>
+                    <h:inputText id="txtt" value="#{usuarioBean.usuario.telefono}" required="true" requiredMessage=" Debe especificar el telefono"/>
+                    <h:message for="txtt" style="color: red" />
+                    <br/><br/>
+
+                    <h:outputLabel value="Rol: "/>
+                    <h:selectOneMenu value="#{usuarioBean.usuario.codigorol}" >
+                        <f:selectItem itemLabel="Administrador" itemValue="1" />
+                        <f:selectItem itemLabel="Jefe Inventario" itemValue="2" />
+                        <f:selectItem itemLabel="Vendedor" itemValue="3" />
+                        <f:selectItem itemLabel="Cliente" itemValue="4" />
+                    </h:selectOneMenu>
+                    <br/><br/>
+
+                    <h:commandButton value="Actualizar" actionListener="#{usuarioBean.actualizar()}"/>
+                </h:form>
+            </center>
+        </p:dialog>
+    </h:body>
+</html>
+

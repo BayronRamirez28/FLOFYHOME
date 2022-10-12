@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>FLOFYHOME</title>
+        <link rel="stylesheet" TYPE="text/css" href="css/login.css"/>
+        <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css"/>
+    </h:head>
+    <h:body>
+        <p:growl id="msj" showDetail="true" skipDetailIfEqualsSummary="true" />
+        <h:form>
+            <div class="inicio">
+                <h2>Inicio Sesión</h2>
+                <i class="fa fa-regular fa-user" id="icon"></i>
+                <br/>
+                <p:inputText id="idoc" value="#{loginBean.us.dni}" placeholder="Documento Identidad" required="true" requiredMessage="Falta Documento de identidad"/>
+                <br/>
+                <br/>
+                <p:password id="icon" value="#{loginBean.us.contraseña}" placeholder="Contraseña" required="true" requiredMessage="Falta Contraseña"/>
+                <br/>
+                <br/>
+                <p:commandButton ajax="false" value="Ingresar" actionListener="#{loginBean.autenticar()}"/>
+                <br/>
+                <br/>
+                <h:commandLink value="Olvide mi contraseña" class="commandlink"/>
+                <br/>
+                <br/>
+                <h:commandLink value="Registrarse" class="commandlink"/>
+            </div>
+        </h:form>
+        <footer>
+            <div class="contenido-footer">
+
+                <ul class="socials">
+                    <li><a href="https://es-la.facebook.com/"><i class="fa fa-facebook"></i></a></li>
+                    <li><a href="https://twitter.com/?lang=es"><i class="fa fa-twitter"></i></a></li>
+                    <li><a href="https://www.google.com.co/"><i class="fa fa-google"></i></a></li>
+                    <li><a href="https://www.youtube.com/"><i class="fa fa-youtube"></i></a></li>
+                    <li><a href="https://www.linkedin.com/"><i class="fa fa-linkedin-square"></i></a></li>
+                </ul>		
+                <div>
+                    <br/>
+                    <a href="">Acerca de</a>
+                    <br/>
+                    <a href="">Contáctanos</a>
+                </div>
+                <div>
+                    <p>&copy; 2022 Derechos reservados</p>
+                </div>
+            </div>
+        </footer>
+    </h:body>
+</html>
+

@@ -1,0 +1,137 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Lote</title>
+        <link rel="stylesheet" TYPE="text/css" href="../css/usuarios.css"/>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous"/>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+        <h:outputStylesheet name="primeicons/primeicons.css" library="primefaces"/>
+    </h:head>
+    <h:body>
+        <f:event type="preRenderView" listener="#{productoBean.listar()}" />
+        <f:event type="preRenderView" listener="#{loteBean.listar()}" />
+        <header>
+            <div class="container__header">
+                <div class="logo">
+                    <img src="../Logo/logo_small.png"/>
+                </div>
+                <h:form>
+                    <div class="menu">
+                        <nav>
+                            <ul>
+                                <li><p:commandButton  value="Productos" action="productos"/></li>
+                                <li><p:commandButton  value="Lotes" action="lotes"/></li>
+                                <li><p:commandButton  value="Proveedores" action="proveedores"/></li>
+                                <li><p:commandButton  value="Categorias" action="categorias"/></li>
+                                <li><p:commandButton  value="Cerrar Sesión" actionListener="#{loginBean.cerrarSesion()}"/></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </h:form>
+            </div>
+        </header>
+
+        <h:form>
+            <p:commandButton value="Nuevo Lote" onclick="PF('wdlgNLote').show()"/>
+            <p:commandButton ajax="false" value="Descargar XSL" style="margin-left: 15px;">
+                <p:dataExporter type="xls" target="lstLt" fileName="Lotes"/>
+            </p:commandButton>
+
+            <p:commandButton ajax="false" value="Descargar PDF" style="margin-left: 15px;">
+                <p:dataExporter type="pdf" target="lstLt" fileName="Lotes"/>
+            </p:commandButton>
+            <p:dataTable value="#{loteBean.lstLotes}"  var="lote" widgetVar="wlstLt" id="lstLt"
+                         filteredValue="#{loteBean.lstLotesFiltrada}" paginator="true" paginatorPosition="bottom"
+                         paginatorTemplate="{CurrentPageReport} {PageLinks} {RowsPerPageDropdown}" rows="8"
+                         currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} registros"
+                         rowsPerPageTemplate="8,16,{ShowAll|'Todos'}">
+                <f:facet name="header">
+                    <div>
+                        <span>Buscar: </span>
+                        <p:inputText id="globalFilter" onkeyup="PF('wlstLt').filter()"/>
+                    </div>
+                </f:facet>
+                <p:column exportable="false">
+                    <f:facet name="header">Código</f:facet>
+                    <h:outputLabel value="#{lote.codigolote}"/>
+                </p:column>
+                <p:column>
+                    <f:facet name="header">Cantidad</f:facet>
+                    <h:outputLabel value="#{lote.cantidad}"/>
+                </p:column>
+                <p:column>
+                    <f:facet name="header">Fecha Lote</f:facet>
+                    <h:outputLabel value="#{lote.fechalote}"/>
+                </p:column>
+                <p:column>
+                    <f:facet name="header">Fecha Vencimiento</f:facet>
+                    <h:outputLabel value="#{lote.fechavencimiento}"/>
+                </p:column>
+                <p:column filterBy="#{lote.producto.nombreproducto}" filterMatchMode="contains">
+                    <f:facet name="header">Producto</f:facet>
+                    <h:outputLabel value="#{lote.producto.nombreproducto}"/>
+                </p:column>
+                <p:column headerText="Opciones" exportable="false"> 
+                    <p:commandLink value="Editar" actionListener="#{loteBean.buscar(lote)}" 
+                                   oncomplete="PF('wdlgELote').show()" update="dlgELote"/>
+                    <h:commandLink value="Eliminar" style="margin-left: 15px;" actionListener="#{loteBean.eliminar(lote)}"
+                                   onclick="return confirm('¿Está completamente seguro de eliminar el Lote?')" />
+                </p:column>
+            </p:dataTable>
+        </h:form>
+        <p:dialog header="Nuevo Lote" id="dlgNLote" widgetVar="wdlgNLote" width="500">
+            <center>
+                <h:form>
+                    <h2>Nuevo Lote</h2>
+                    <h:panelGrid columns="2">
+
+                        <p:outputLabel value="Cantidad"/>
+                        <p:inputText value="#{loteBean.lot.cantidad}" required="true"/>
+
+                        <p:outputLabel value="Fecha Lote"/>
+                        <p:inputText value="#{loteBean.lot.fechalote}" required="true"/>
+
+                        <p:outputLabel value="Fecha Vencimiento"/>
+                        <p:inputText value="#{loteBean.lot.fechavencimiento}" required="true"/>
+
+                        <p:outputLabel value="Producto"/>
+                        <p:selectOneMenu value="#{loteBean.lot.codigoproducto}">
+                            <f:selectItems value="#{productoBean.lstProductos}" var="pr" itemLabel="#{pr.nombreproducto}" itemValue="#{pr.codigoproducto}"/>
+                        </p:selectOneMenu>
+
+                        <h:commandButton value="Agregar" actionListener="#{loteBean.agregar()}"/>
+                    </h:panelGrid>
+                </h:form>
+            </center>
+        </p:dialog>
+        <p:dialog id="dlgELote" widgetVar="wdlgELote" header="Editar Lote">
+            <center>
+                <h:panelGrid columns="2">
+                    <h:form>
+                        <p:outputLabel value="Cantidad"/>
+                        <p:inputText value="#{loteBean.lot.cantidad}" required="true"/>
+
+                        <p:outputLabel value="Fecha Lote"/>
+                        <p:inputText value="#{loteBean.lot.fechalote}" required="true"/>
+
+                        <p:outputLabel value="Fecha Vencimiento"/>
+                        <p:inputText value="#{loteBean.lot.fechavencimiento}" required="true"/>
+
+                        <p:outputLabel value="Producto"/>
+                        <p:selectOneMenu value="#{loteBean.lot.codigoproducto}">
+                            <f:selectItems value="#{productoBean.lstProductos}" var="pr" itemLabel="#{pr.nombreproducto}" itemValue="#{pr.codigoproducto}"/>
+                        </p:selectOneMenu>
+
+
+                        <h:commandButton value="Actualizar" actionListener="#{loteBean.actualizar()}"/>
+                    </h:form>
+                </h:panelGrid>
+            </center>
+        </p:dialog>
+    </h:body>
+</html>
+

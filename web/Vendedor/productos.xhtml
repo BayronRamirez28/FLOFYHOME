@@ -1,0 +1,93 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Productos</title>
+        <link rel="stylesheet" TYPE="text/css" href="../css/productos.css"/>
+        <h:outputStylesheet name="primeicons/primeicons.css" library="primefaces"/>
+    </h:head>
+    <h:body>
+        <p:growl id="msj" showDetail="true" skipDetailIfEqualsSummary="true"/>
+        <f:event type="preRenderView" listener="#{productoBean.listar()}" />
+        <f:event type="preRenderView" listener="#{proveedorBean.listar()}"/>
+        <f:event type="preRenderView" listener="#{categoriaBean.listar()}"/>
+        <header>
+            <div class="container__header">
+                <div class="logo">
+                    <img src="../Logo/logo_small.png"/>
+                </div>
+                <h:form>
+                    <div class="menu">
+                        <nav>
+                            <ul>
+                                <li><p:commandButton  value="Productos" action="productos"/></li>
+                                <li><p:commandButton  value="Ventas" action="Ventas"/></li>
+                                <li><p:commandButton  value="Cerrar Sesión" actionListener="#{loginBean.cerrarSesion()}"/></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </h:form>
+            </div>
+        </header>
+        <h:form>
+            <p:commandButton ajax="false" value="Descargar XSL" style="margin-left: 15px;">
+                <p:dataExporter type="xls" target="tblProd" fileName="Productos"/>
+            </p:commandButton>
+
+            <p:commandButton ajax="false" value="Descargar PDF" style="margin-left: 15px;">
+                <p:dataExporter type="pdf" target="tblProd" fileName="Productos"/>
+            </p:commandButton>
+            <p:dataTable id="tblProd" value="#{productoBean.lstProductos}"  var="pro" widgetVar="wtblProd"
+                         filteredValue="#{productoBean.lstProductosFiltrada}" 
+                         emptyMessage="No se encuentran registros"
+                         paginator="true" paginatorPosition="bottom"
+                         paginatorTemplate="{CurrentPageReport} {PageLinks} {RowsPerPageDropdown}" rows="5"
+                         currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} registros"
+                         rowsPerPageTemplate="5,10,{ShowAll|'Todos'}">
+                <f:facet name="header">
+                    <div aling="right">
+                        <span>Buscar: </span>
+                        <p:inputText id="globalFilter" onkeyup="PF('wtblProd').filter()"/>
+                    </div>
+                </f:facet> 
+                <p:column headerText="Código" exportable="false">
+                    <h:outputLabel value="#{pro.codigoproducto}"/>
+                </p:column>
+                <p:column headerText="Nombre Producto" filterBy="#{pro.nombreproducto}" filterMatchMode="contains">
+                    <h:outputLabel value="#{pro.nombreproducto}"/>
+                </p:column>
+                <p:column headerText="Cantidad">
+                    <h:outputLabel value="#{pro.cantidad}"/>
+                </p:column>
+                <p:column headerText="Precio Compra">
+                    <h:outputLabel value="#{pro.preciocompra}"/>
+                </p:column>
+                <p:column headerText="Precio venta">
+                    <h:outputLabel value="#{pro.precioventa}"/>
+                </p:column>
+                <p:column headerText="Estado" filterBy="#{pro.estado}" filterMatchMode="contains">
+                    <h:outputLabel value="#{pro.estado}"/>
+                </p:column>
+                <p:column headerText="Detalle">
+                    <h:outputLabel value="#{pro.detalle}"/>
+                </p:column>
+                <p:column headerText="Cantidad Minima">
+                    <h:outputLabel value="#{pro.cantidadminima}"/>
+                </p:column>
+                <p:column headerText="Imagen" style="text-align: center;" exportable="false">
+                    <p:graphicImage value="#{pro.foto_img}" height="50"/>
+                </p:column>
+                <p:column headerText="Proveedor" filterBy="#{pro.proveedor.nombreproveedor}" filterMatchMode="contains">
+                    <h:outputLabel value="#{pro.proveedor.nombreproveedor}"/>
+                </p:column>
+                <p:column headerText="Categoria" filterBy="#{pro.categoria.nombrecategoria}" filterMatchMode="contains">
+                    <h:outputLabel value="#{pro.categoria.nombrecategoria}"/>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+    </h:body>
+</html>
+
